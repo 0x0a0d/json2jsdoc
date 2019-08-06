@@ -32,6 +32,12 @@ class Json2JSDoc {
             is_array
           };
         case "object":
+          if (value == null) {
+            return {
+              type: 'null|*',
+              name: key
+            }
+          }
           this.convert({
             input: value,
             namespace: key,
