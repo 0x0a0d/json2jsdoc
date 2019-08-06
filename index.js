@@ -5,7 +5,6 @@ class Json2JSDoc {
     this.memberOf = memberOf === '' ? null: memberOf;
     this.break_line = break_line;
     this.json_list = [];
-    this.convert();
   }
   /**
    * @return {typeof Json2JSDoc}
@@ -44,7 +43,7 @@ class Json2JSDoc {
             name: key
           };
         default:
-        debugger
+          console.warn(`New value type '${value_type}'`)
       }
     });
 
