@@ -39,7 +39,7 @@ class Json2JSDoc {
             type: value_type,
             name: key,
             is_array,
-            input: input.toString()
+            value: value.toString()
           };
         case "object":
           if (value == null) {
@@ -71,12 +71,16 @@ class Json2JSDoc {
     return this;
   }
   export() {
-    return this.json_list.map(({namespace, memberOf, body, input}) => {
+    return this.json_list.map(({namespace, memberOf, body, value}) => {
       const jsdoc = [];
       jsdoc.push(`/** @namespace ${namespace}`);
       if (memberOf != null) jsdoc.push(` * @memberOf ${memberOf}`);
       body.forEach(({type, name, is_array}) => {
-        jsdoc.push(` * @property {${type}${is_array === true?'[]':''}} ${name}${(input != null && this.add_content_as_description)?input:''}`)
+        if (value != null && this.add_content_as_description) {
+          jsdoc.push(` * @property {${type}${is_array === true?'[]':''}} ${name} - ${value}`);
+        } else {
+          jsdoc.push(` * @property {${type}${is_array === true?'[]':''}} ${name}`);
+        }
       });
       jsdoc.push(' */');
       return jsdoc.join(this.break_line);
