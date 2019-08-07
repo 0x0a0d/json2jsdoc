@@ -1,9 +1,18 @@
 class Json2JSDoc {
-  constructor(input, {namespace = 'Default', memberOf, break_line = '\n'} = {}) {
-    this.input = input;
+  /**
+   * @param {object} input
+   * @param {string} namespace
+   * @param {string} memberOf
+   * @param {string} break_line
+   * @param {boolean} add_content_as_description
+   */
+  constructor(input, {namespace = 'Default', memberOf, break_line = '\n', add_content_as_description = false} = {}) {
+    if (typeof input !== 'object') throw new Error(`Only support object as input`);
+    this.input = Array.isArray(input) ? input[0] : input;
     this.namespace = namespace;
     this.memberOf = memberOf === '' ? null: memberOf;
     this.break_line = break_line;
+    this.add_content_as_description = add_content_as_description;
     this.json_list = [];
   }
   /**
@@ -29,7 +38,8 @@ class Json2JSDoc {
           return {
             type: value_type,
             name: key,
-            is_array
+            is_array,
+            input: input.toString()
           };
         case "object":
           if (value == null) {
@@ -61,12 +71,12 @@ class Json2JSDoc {
     return this;
   }
   export() {
-    return this.json_list.map(({namespace, memberOf, body}) => {
+    return this.json_list.map(({namespace, memberOf, body, input}) => {
       const jsdoc = [];
       jsdoc.push(`/** @namespace ${namespace}`);
       if (memberOf != null) jsdoc.push(` * @memberOf ${memberOf}`);
       body.forEach(({type, name, is_array}) => {
-        jsdoc.push(` * @property {${type}${is_array === true?'[]':''}} ${name}`)
+        jsdoc.push(` * @property {${type}${is_array === true?'[]':''}} ${name}${(input != null && this.add_content_as_description)?input:''}`)
       });
       jsdoc.push(' */');
       return jsdoc.join(this.break_line);
