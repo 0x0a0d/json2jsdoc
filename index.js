@@ -23,7 +23,6 @@ class Json2JSDoc {
    * @return {typeof Json2JSDoc}
    */
   convert({input = this.input, namespace = this.namespace, memberOf = this.memberOf}={}) {
-    namespace = this.constructor.correctNamespace(namespace);
     const body = Object.keys(input).map(key=>{
       const is_array = Array.isArray(input[key]);
       const value = is_array ? input[key][0] : input[key];
@@ -55,11 +54,11 @@ class Json2JSDoc {
           }
           this.convert({
             input: value,
-            namespace: key,
+            namespace: this.constructor.correctNamespace(key),
             memberOf: `${memberOf == null ? '' : `${memberOf}.`}${namespace}`
           });
           return {
-            type: `${memberOf == null ? '' : `${memberOf}.`}${namespace}.${key}`,
+            type: `${memberOf == null ? '' : `${memberOf}.`}${namespace}.${this.constructor.correctNamespace(key)}`,
             is_array,
             name: key
           };
