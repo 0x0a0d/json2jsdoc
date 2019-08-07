@@ -15,10 +15,15 @@ class Json2JSDoc {
     this.add_content_as_description = add_content_as_description;
     this.json_list = [];
   }
+  /**@private*/
+  static correctNamespace(namespace) {
+    return namespace.replace(/[^a-zA-Z0-9_]/g, '_');
+  }
   /**
    * @return {typeof Json2JSDoc}
    */
   convert({input = this.input, namespace = this.namespace, memberOf = this.memberOf}={}) {
+    namespace = this.constructor.correctNamespace(namespace);
     const body = Object.keys(input).map(key=>{
       const is_array = Array.isArray(input[key]);
       const value = is_array ? input[key][0] : input[key];
