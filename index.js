@@ -71,11 +71,11 @@ class Json2JSDoc {
     return this;
   }
   export() {
-    return this.json_list.map(({namespace, memberOf, body, value}) => {
+    return this.json_list.map(({namespace, memberOf, body}) => {
       const jsdoc = [];
       jsdoc.push(`/** @namespace ${namespace}`);
       if (memberOf != null) jsdoc.push(` * @memberOf ${memberOf}`);
-      body.forEach(({type, name, is_array}) => {
+      body.forEach(({type, name, is_array, value}) => {
         if (value != null && this.add_content_as_description) {
           jsdoc.push(` * @property {${type}${is_array === true?'[]':''}} ${name} - ${value}`);
         } else {
