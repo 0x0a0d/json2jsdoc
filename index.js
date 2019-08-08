@@ -43,7 +43,7 @@ class Json2JSDoc {
             type: value_type,
             name: key,
             is_array,
-            value: value.toString()
+            value: JSON.stringify(value)
           };
         case "object":
           if (value == null) {
