@@ -1,13 +1,14 @@
 {
   "name": "json2jsdoc",
-  "version": "1.0.1",
+  "version": "1.0.2-0",
   "description": "json2jsdoc",
   "main": "index.ts",
   "scripts": {
     "prepack": "tsc"
   },
   "keywords": [
-    "json", "jsdoc"
+    "json",
+    "jsdoc"
   ],
   "author": "0x0a0d",
   "license": "ISC",
