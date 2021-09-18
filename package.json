@@ -1,12 +1,28 @@
 {
   "name": "json2jsdoc",
   "version": "1.0.1",
-  "description": "",
-  "main": "index.js",
+  "description": "json2jsdoc",
+  "main": "index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepack": "tsc"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "keywords": [
+    "json", "jsdoc"
+  ],
+  "author": "0x0a0d",
+  "license": "ISC",
+  "repository": {
+    "url": "git@github.com:0x0a0d/json2jsdoc.git",
+    "type": "git"
+  },
+  "devDependencies": {
+    "@cylution/eslint-config-nodejs": "^1.0.7-alpha.0",
+    "@typescript-eslint/parser": "^4.31.1",
+    "eslint": "^7.32.0",
+    "typescript": "^4.4.3"
+  },
+  "files": [
+    "index.js",
+    "index.d.ts"
+  ]
 }
