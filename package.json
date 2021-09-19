@@ -2,7 +2,7 @@
   "name": "json2jsdoc",
   "version": "2.0.0",
   "description": "json2jsdoc",
-  "main": "index.ts",
+  "main": "index.js",
   "scripts": {
     "prepack": "tsc"
   },

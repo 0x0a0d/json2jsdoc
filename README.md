@@ -1,8 +1,8 @@
-#json2jsdoc
+# json2jsdoc
 
 > If you have time, should learn both `jsdoc`, `typescript`
 
-#usage
+# usage
 
 ```js
 import { json2JSDoc } from 'index'
