@@ -4,7 +4,8 @@
   "description": "json2jsdoc",
   "main": "index.js",
   "scripts": {
-    "prepack": "tsc"
+    "prepack": "tsc",
+    "test": "npx jest"
   },
   "keywords": [
     "json",

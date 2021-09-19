@@ -1,5 +1,5 @@
 // @ts-ignore
-import { json2JSDoc } from '../index.ts'
+import { json2JSDoc } from './index.ts'
 
 const input = {
   _id: 'xyz',
