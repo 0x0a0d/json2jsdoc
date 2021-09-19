@@ -102,7 +102,7 @@ export const json2JSDoc = (input: object, options: Json2JSDocOptions = {}): stri
     .map(({ namespace, memberOf, body }) => {
       const jsdoc: string[] = []
       jsdoc.push(`/** @namespace ${namespace}`)
-      if (memberOf != null) jsdoc.push(` * @memberOf ${memberOf.join('.')}`)
+      if (Array.isArray(memberOf) && memberOf.length) jsdoc.push(` * @memberOf ${memberOf.join('.')}`)
       body
         .filter(x => x != null)
         .forEach(({ type, name, isArray, value }) => {

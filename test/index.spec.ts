@@ -1,4 +1,5 @@
-import { json2JSDoc } from '../index'
+// @ts-ignore
+import { json2JSDoc } from '../index.ts'
 
 const input = {
   _id: 'xyz',
@@ -21,6 +22,10 @@ const input = {
 }
 
 describe('Json2JSDoc', () => {
+  it('should pass: non options', () => {
+    const jsdoc = json2JSDoc(input)
+    expect(jsdoc).toBe('/** @namespace Default\n * @property {string} _id\n * @property {*[]} sides\n * @property {number} retail_price\n * @property {string} sku\n * @property {string} title\n * @property {number} weight\n * @property {string} currency\n * @property {Default,options[]} options\n * @property {string[]} attributes\n * @property {string} image\n */\n/** @namespace options\n * @memberOf Default\n * @property {boolean} is_preselected\n * @property {number} position\n * @property {string} slug\n * @property {string} value\n * @property {string} name\n * @property {string} attribute\n */')
+  })
   it('should pass: non description', () => {
     const jsdoc = json2JSDoc(input, {
       memberOf: 'Single.Product',
