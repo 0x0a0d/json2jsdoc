@@ -89,7 +89,7 @@ const convert = (input: object, namespace: string, memberOf: string[], jsonList:
   return jsonList
 }
 
-export const json2JSDoc = (input: object, options: Json2JSDocOptions): string => {
+export const json2JSDoc = (input: object, options: Json2JSDocOptions = {}): string => {
   if (typeof input !== 'object' || input == null) throw new Error(`Only support non-null object as input`)
 
   const breakLine = options.breakLine || '\n'
