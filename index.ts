@@ -30,7 +30,7 @@ type JsonBodyObject = {
 }
 type JsonList = {
   namespace: string
-  memberOf: string | null
+  memberOf: string[]
   body: JsonBodyObject[]
 }
 
@@ -38,95 +38,82 @@ function correctNamespace(namespace) {
   return namespace.replace(/[^a-zA-Z0-9_]/g, '_')
 }
 
-export default class Json2JSDoc {
-  private input: object
-  private namespace: string
-  private memberOf: null | string
-  private readonly breakLine: BreakLine
-  private useInputValueAsDescription: boolean
-  private jsonList: JsonList[]
+const convert = (input: object, namespace: string, memberOf: string[], jsonList: JsonList[] = []): JsonList[] => {
+  const body: JsonBodyObject[] = Object.keys(input).map(key => {
+    const isArray = Array.isArray(input[key])
+    const value = isArray ? input[key][0] : input[key]
 
-  constructor(input: object, { namespace = 'Default', memberOf, breakLine = '\n', useInputValueAsDescription = false }: Json2JSDocOptions = {}) {
-    if (typeof input !== 'object' || input == null) throw new Error(`Only support non-null object as input`)
-
-    this.input = Array.isArray(input) ? input[0] : input
-    this.namespace = namespace
-    this.memberOf = memberOf || null
-    this.breakLine = breakLine
-    this.useInputValueAsDescription = useInputValueAsDescription
-    this.jsonList = []
-  }
-
-  convert({ input = this.input, namespace = this.namespace, memberOf = this.memberOf } = {}) {
-    const body: JsonBodyObject[] = Object.keys(input).map(key => {
-      const isArray = Array.isArray(input[key])
-      const value = isArray ? input[key][0] : input[key]
-
-      const valueType = typeof value
-      switch (valueType) {
-        case 'undefined':
+    const valueType = typeof value
+    switch (valueType) {
+      case 'undefined':
+        return {
+          type: '*',
+          name: key,
+          isArray
+        }
+      case 'number':
+      case 'string':
+      case 'boolean':
+      case 'function':
+        return {
+          type: valueType,
+          name: key,
+          isArray,
+          value: JSON.stringify(value)
+        }
+      case 'object': {
+        if (value == null) {
           return {
-            type: '*',
-            name: key,
-            isArray
-          }
-        case 'number':
-        case 'string':
-        case 'boolean':
-        case 'function':
-          return {
-            type: valueType,
-            name: key,
-            isArray,
-            value: JSON.stringify(value)
-          }
-        case 'object':
-          if (value == null) {
-            return {
-              type: 'null|*',
-              name: key
-            }
-          }
-          this.convert({
-            input: value,
-            namespace: correctNamespace(key),
-            memberOf: `${memberOf == null ? '' : `${memberOf}.`}${namespace}`
-          })
-          return {
-            type: `${memberOf == null ? '' : `${memberOf}.`}${namespace}.${correctNamespace(key)}`,
-            isArray,
+            type: 'null|*',
             name: key
           }
-        default:
-          console.warn(`New value type '${valueType}'`)
-          return null
+        }
+        convert(value, correctNamespace(key), memberOf.concat(namespace), jsonList)
+        return {
+          type: memberOf.concat(namespace, correctNamespace(key)),
+          isArray,
+          name: key
+        }
       }
-    }).filter(x => x != null) as JsonBodyObject[]
+      default:
+        console.warn(`New value type '${valueType}'`)
+        return null
+    }
+  }).filter(x => x != null) as JsonBodyObject[]
 
-    this.jsonList.unshift({
-      namespace,
-      memberOf,
-      body
-    })
-    return this
+  jsonList.unshift({
+    namespace,
+    memberOf: memberOf,
+    body
+  })
+  return jsonList
+}
+
+export const json2JSDoc = (input: object, options: Json2JSDocOptions): string => {
+  if (typeof input !== 'object' || input == null) throw new Error(`Only support non-null object as input`)
+
+  const breakLine = options.breakLine || '\n'
+
+  if (!Array.isArray(input)) {
+    input = [input]
   }
-
-  export(): string {
-    return this.jsonList.map(({ namespace, memberOf, body }) => {
+  const jsonList: JsonList[] = ([] as JsonList[]).concat(...(input as object[]).map(item => convert(item, options.namespace || 'Default', options.memberOf ? [options.memberOf] : [])))
+  return jsonList
+    .map(({ namespace, memberOf, body }) => {
       const jsdoc: string[] = []
       jsdoc.push(`/** @namespace ${namespace}`)
-      if (memberOf != null) jsdoc.push(` * @memberOf ${memberOf}`)
+      if (memberOf != null) jsdoc.push(` * @memberOf ${memberOf.join('.')}`)
       body
         .filter(x => x != null)
         .forEach(({ type, name, isArray, value }) => {
-          if (value != null && this.useInputValueAsDescription) {
+          if (value != null && options.useInputValueAsDescription) {
             jsdoc.push(` * @property {${type}${isArray === true ? '[]' : ''}} ${name} - ${value}`)
           } else {
             jsdoc.push(` * @property {${type}${isArray === true ? '[]' : ''}} ${name}`)
           }
         })
       jsdoc.push(' */')
-      return jsdoc.join(this.breakLine)
-    }).join(this.breakLine)
-  }
+      return jsdoc.join(breakLine)
+    })
+    .join(breakLine)
 }

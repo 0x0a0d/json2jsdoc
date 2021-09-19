@@ -1,0 +1,19 @@
+{
+  "_id": "xyz",
+  "sides": [],
+  "retail_price": 39.99,
+  "sku": "",
+  "title": "One Size",
+  "weight": 0,
+  "currency": "USD",
+  "options": [{
+    "is_preselected": false,
+    "position": 0,
+    "slug": "one-size",
+    "value": "One Size",
+    "name": "One Size",
+    "attribute": "abc"
+  }],
+  "attributes": ["one-size"],
+  "image": "https://xxx.abc.net/hishawk.com/products/1234/front/thumb.jpg"
+}
